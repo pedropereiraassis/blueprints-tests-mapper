@@ -1,0 +1,17 @@
+{
+  "name": "testmapper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cytoscape": "^3.22.1",
+    "cytoscape-all-paths": "^0.1.0",
+    "lodash": "^4.17.21"
+  }
+}

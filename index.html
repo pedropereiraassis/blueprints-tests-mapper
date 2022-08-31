@@ -1,0 +1,110 @@
+<!DOCTYPE>
+
+<html>
+
+<head>
+  <title>Cytoscape</title>
+
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+
+  <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+
+  <!-- for testing with local version of cytoscape.js -->
+  <!--<script src="../cytoscape.js/build/cytoscape.js"></script>-->
+
+  <script src="cytoscape-all-paths.js"></script>
+  <script src='samples/simpleBP.js'></script>
+
+  <style>
+    #cy {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0px;
+      left: 0px;
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      let cont = 1;
+      var cy = window.cy = cytoscape({
+        container: document.getElementById('cy'),
+        style: [
+          {
+            selector: 'node',
+            style: {
+              shape: 'hexagon',
+              'background-color': 'red',
+              label: 'data(id)'
+            }
+          }]
+      });
+      nodes.forEach((node) => cy.add({ data: { id: node.id } }))
+      nodes.forEach((node) => {
+        if (node.next && typeof node.next != 'object') {
+          cy.add({
+            data: {
+              id: cont++,
+              source: node.id,
+              target: node.next
+            }
+          })
+        } else if (node.next) {
+          for (const path of Object.values(node.next)) {
+            cy.add({
+              data: {
+                id: cont++,
+                source: node.id,
+                target: path
+              }
+            })
+          }
+        }
+      })
+      cy.layout({
+        name: 'breadthfirst',
+        directed: true,
+        avoidOverlap: true,
+        nodeOverlap: 4
+      }).run();
+
+      // const roots = cy.elements().roots();
+      // const nextNodes = roots.map((node) => node.outgoers());
+      // console.log(nextNodes);
+      // const graphNodes = cy.nodes();
+      // const graphEdges = cy.edges();
+      // const kruskal = cy.elements().kruskal()
+      // const aStar = cy.elements().aStar({ root: '#START', goal: '#END-USER' });
+      // console.log(kruskal);
+
+      // demo your collection ext
+      let allPaths = cy.elements().cytoscapeAllPaths(/* {maxPaths: 2, rootIds: ['g', 'e']} */);
+      
+      // Usage example: display each path at regular intervals
+      let maxTimes = allPaths.length;
+      console.log(allPaths.map((path) => path.filter((node) => path.indexOf(node) % 2 === 0)
+        .map((node) => node.id())));
+      console.log(`Paths: ${maxTimes}`)
+      let currentTimes = 0;
+      let selectedEles;
+      let interval = setInterval(() => {
+        if (currentTimes === maxTimes) {
+          currentTimes = 0;
+        } else {
+          if (selectedEles) selectedEles.unselect();
+          selectedEles = allPaths[currentTimes];
+          selectedEles.select();
+          currentTimes++;
+        }
+      }, 2000);
+
+    });
+  </script>
+</head>
+
+<body>
+  <div id="cy"></div>
+</body>
+
+</html>
