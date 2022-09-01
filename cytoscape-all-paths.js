@@ -112,19 +112,19 @@ module.exports = function () {
 
   function traversing(node, preNodes, isLoop = false, preNodesLoop) {
     let nextEles = getOutgoers(node);
-
     if (isLoop) {
       if (nextEles.length === 0) {
         // It's the ending node
+        loops = [];
         allPaths.push(preNodes);
         return;
       }
       nextEles.forEach(function (pairEles) {
-        if (preNodesLoop.find(function(item) {
+        if ((preNodesLoop.find(function(item) {
           return item.id() === pairEles[1].id();
-        })) {
+        }))&& isNaN(pairEles[1].id())) {
           return;
-        } else {
+        } else if (isNaN(pairEles[1].id())) {
           // console.log(pairEles[1].id())
           traversing(pairEles[1], preNodes.concat(pairEles));
         }
@@ -137,21 +137,24 @@ module.exports = function () {
     } else {
       if (nextEles.length === 0) {
         // It's the ending node
+        loops = [];
         allPaths.push(preNodes);
         return;
       }
       nextEles.forEach(function (pairEles) {
-        if (preNodes.find(function (item) {
+        if ((preNodes.find(function (item) {
           return item.id() === pairEles[1].id();
-        })) {
+        })) && isNaN(pairEles[1].id())) {
           const conn = `${preNodes[preNodes.length-1].id()} -> ${pairEles[1].id()}`;
           let loopNode = preNodes.indexOf(pairEles[1])
           let preNodes_ = preNodes.slice(0, loopNode + 1);
           if (!loops.includes(conn)) {
             loops.push(conn);
             traversing(pairEles[1], preNodes.concat(pairEles), true, preNodes_);
+          } else {
+            return;
           }
-        } else {
+        } else if (isNaN(pairEles[1].id())) {
           traversing(pairEles[1], preNodes.concat(pairEles));
         }
       });
@@ -181,10 +184,12 @@ module.exports = function () {
   }
 
   var allPathsCollection = [];
-  allPaths.forEach(function (pathItem) {
+  const allPathsNoRepeat = [...new Set(allPaths)];
+  allPathsNoRepeat.forEach(function (pathItem) {
     var pathCollection = cy.collection(pathItem);
     allPathsCollection.push(pathCollection);
   });
+  console.log(loops)
   return allPathsCollection; // chainability
 };
 
