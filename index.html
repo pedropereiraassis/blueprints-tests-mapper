@@ -13,7 +13,7 @@
   <!--<script src="../cytoscape.js/build/cytoscape.js"></script>-->
 
   <script src="cytoscape-all-paths.js"></script>
-  <script src='samples/test2.js'></script>
+  <script src='samples/mediumBP.js'></script>
 
   <style>
     #cy {
@@ -26,8 +26,8 @@
   </style>
 
   <script>
+    let count = 0;
     document.addEventListener('DOMContentLoaded', function () {
-      let cont = 1;
       var cy = window.cy = cytoscape({
         container: document.getElementById('cy'),
         style: [
@@ -40,12 +40,12 @@
             }
           }]
       });
-      nodes.forEach((node) => cy.add({ data: { id: node.id } }))
+      nodes.forEach((node) => cy.add({ data: { id: node.id, type: node.type } }))
       nodes.forEach((node) => {
         if (node.next && typeof node.next != 'object') {
           cy.add({
             data: {
-              id: cont++,
+              id: count++,
               source: node.id,
               target: node.next
             }
@@ -54,7 +54,7 @@
           for (const path of Object.values(node.next)) {
             cy.add({
               data: {
-                id: cont++,
+                id: count++,
                 source: node.id,
                 target: path
               }
@@ -69,23 +69,75 @@
         nodeOverlap: 4
       }).run();
 
-      // const roots = cy.elements().roots();
-      // const nextNodes = roots.map((node) => node.outgoers());
-      // console.log(nextNodes);
-      // const graphNodes = cy.nodes();
-      // const graphEdges = cy.edges();
-      // const kruskal = cy.elements().kruskal()
-      // const aStar = cy.elements().aStar({ root: '#START', goal: '#END-USER' });
-      // console.log(kruskal);
+      const roots = cy.elements().roots();
+      const eles = cy.elements();
+      const allNodes = eles.nodes();
+      const nextNodes = roots.map((node) => node.neighborhood().id());
+
+      // depthFirstSearch
+      // const paths = [];
+      // const path = [];
+      // const dfs = eles.dfs({
+      //   root: '#START',
+      //   visit: function (v, e, u, i, depth) {
+      //     if (v.id().includes('END-')) {
+      //       path.push(v.id());
+      //       paths.push(path);
+      //     } else {
+      //       path.push(v.id());
+      //     }
+      //     console.log(path)
+      //   },
+      //   directed: true
+      // })
+      // console.log(dfs.path.map(node => node.id()).filter(node => !node.includes('->')));
+      // console.log(dfs.found.id())
+      // console.log(path)
+
+      // aStart
+      // const aStar = eles.aStar({ root: '#START', goal: '#END-CANCELED', directed: true});
+      // console.log(aStar.path.select().map(node => node.id()).filter(node => !node.includes('->')));
+
+      // floydWarshall
+      // const fw = eles.floydWarshall({ directed: true });
+      // const path1 = fw.path('#START', '#END-CANCELED');
+      // const path2 = fw.path('#START', '#END-REDIRECT');
+      // const path3 = fw.path('#START', '#END-USER');
+      // console.log(path1.map(node => node.id()).filter(node => !node.includes('->')));
+      // console.log(path2.map(node => node.id()).filter(node => !node.includes('->')));
+      // console.log(path3.map(node => node.id()).filter(node => !node.includes('->')));
+
+      // bellmanFord
+      let paths = [];
+      const startNodes = eles.roots().map(node=>node.id());
+      const finishNodes = eles.nodes()
+        .filter((node) => node._private.data.type === 'Finish')
+        .map((node) => node.id());
+      startNodes.forEach((startNode) => {
+        finishNodes.forEach((finishNode) => {
+          const bf = eles.bellmanFord({ root: `#${startNode}`, directed: true });
+          const path = bf.pathTo(`#${finishNode}`);
+          paths.push(path.filter((node) => node.isNode()).map(node => node.id()));
+        })
+      })
+      console.log(`Paths: ${paths.length}`);
+      console.log(paths);
+
+      // dijkstra
+      // const dijkstra = eles.dijkstra({ root: '#START', directed: true });
+      // const pathToEnd = dijkstra.pathTo(cy.$('#END-REDIRECT'));
+      // const distToEnd = dijkstra.distanceTo(cy.$('#END-REDIRECT'));
+      // console.log(pathToEnd.map(node => node.id()).filter(node => !node.includes('->')));
+      // console.log(distToEnd);
 
       // demo your collection ext
       let allPaths = cy.elements().cytoscapeAllPaths(/* {maxPaths: 2, rootIds: ['g', 'e']} */);
-      
+
       // Usage example: display each path at regular intervals
       let maxTimes = allPaths.length;
-      console.log(allPaths.map((path) => path.filter((node) => path.indexOf(node) % 2 === 0)
-        .map((node) => node.id())));
-      console.log(`Paths: ${maxTimes}`)
+      // console.log(allPaths.map((path) => path.filter((node) => path.indexOf(node) % 2 === 0)
+      //   .map((node) => node.id())));
+      // console.log(`Paths: ${maxTimes}`)
       let currentTimes = 0;
       let selectedEles;
       let interval = setInterval(() => {

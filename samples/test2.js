@@ -1,4 +1,4 @@
-const nodes = [
+module.exports = [
   {
     "id": "START",
     "name": "start ATV_VERIFY_PLD_SN process",

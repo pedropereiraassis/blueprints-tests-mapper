@@ -1,4 +1,4 @@
-const nodes = [
+module.exports = [
   {
     "id": "START-CHOOSE-LOAN-DETAILS",
     "name": "start",

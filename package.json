@@ -10,8 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "cytoscape": "^3.22.1",
-    "cytoscape-all-paths": "^0.1.0",
-    "lodash": "^4.17.21"
+    "cytoscape": "3.22.1",
+    "cytoscape-all-paths": "0.1.0",
+    "k-shortest-path": "0.0.5",
+    "lodash": "4.17.21"
   }
 }

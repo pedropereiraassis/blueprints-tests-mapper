@@ -1,4 +1,4 @@
-const nodes = [
+module.exports = [
     {
       id: 'START',
       name: 'Start node',

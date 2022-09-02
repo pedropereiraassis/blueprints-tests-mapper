@@ -115,7 +115,6 @@ module.exports = function () {
     if (isLoop) {
       if (nextEles.length === 0) {
         // It's the ending node
-        loops = [];
         allPaths.push(preNodes);
         return;
       }
@@ -189,7 +188,7 @@ module.exports = function () {
     var pathCollection = cy.collection(pathItem);
     allPathsCollection.push(pathCollection);
   });
-  console.log(loops)
+  // console.log(loops)
   return allPathsCollection; // chainability
 };
 
