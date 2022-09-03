@@ -37,7 +37,7 @@ const finishNodes = eles.nodes()
   .map((node) => node.id());
 
 const allPaths = eles.cytoscapeAllPaths();
-let paths = allPaths.map((path) => path.filter((node) => node.isNode()))
+let paths = allPaths.map((path) => path.filter((node) => node.isNode()));
 // console.log(paths.map(path=>path.map(node=>node.id())))
 // console.log(paths.length)
 let repeatedPaths = [];
@@ -51,33 +51,59 @@ paths.forEach((path) => {
     fullPaths.push(path);
   }
 });
+
 // console.log(repeatedPaths.map(path=>path.map(node=>node.id())))
-console.log(repeatedPaths.length)
-while (repeatedPaths.length !== 0) {
-  repeatedPaths.forEach((path) => {
-    finishNodes.forEach((finishNode) => {
-      const bf = eles.bellmanFord({
-        root: `#${path.at(-1).id()}`,
-        directed: true
-      });
-      const pathToFinish = bf.pathTo(`#${finishNode}`).filter((node) => node.isNode());
-      if (pathToFinish.length !== 0) {
-        const newPath = [...path.slice(0, -1), ...pathToFinish];
-        fullPaths.push(newPath);
-      }
-    })
+// while (repeatedPaths.length !== 0) {
+//   repeatedPaths.forEach((path) => {
+//     finishNodes.forEach((finishNode) => {
+//       const bf = eles.bellmanFord({
+//         root: `#${path.at(-1).id()}`,
+//         directed: true
+//       });
+//       const pathToFinish = bf.pathTo(`#${finishNode}`).filter((node) => node.isNode());
+//       if (pathToFinish.length !== 0) {
+//         const newPath = [...path.slice(0, -1), ...pathToFinish];
+//         fullPaths.push(newPath);
+//       }
+//     })
+//   });
+
+//   repeatedPaths = [];
+
+//   fullPaths.forEach((path) => {
+//     if (path?.at(-1)?._private?.data?.type?.toLowerCase() === 'finish') {
+//       finalPaths.push(path);
+//     }
+//   });
+// }
+
+repeatedPaths.forEach((repeatedPath) => {
+  const allNewPaths = eles.cytoscapeAllPaths({
+    rootIds: [`${repeatedPath.at(-1).id()}`]
   });
-
-  repeatedPaths = [];
-
-  fullPaths.forEach((path) => {
-    if (path?.at(-1)?._private?.data?.type?.toLowerCase() === 'finish') {
-      finalPaths.push(path);
-    } else {
-      repeatedPaths.push(path);
+  let newPaths = allNewPaths.map((path) => path.filter((node) => node.isNode()));
+  
+  newPaths.forEach((newPath) => {
+    if (newPath?.at(-1)?._private?.data?.type?.toLowerCase() === 'finish') {
+      const newFullPath = [...repeatedPath.slice(0, -1), ...newPath];
+      fullPaths.push(newFullPath);
     }
   });
-}
+})
+
+// repeatedPaths.forEach((path) => {
+//   finishNodes.forEach((finishNode) => {
+//     const bf = eles.bellmanFord({
+//       root: `#${path.at(-1).id()}`,
+//       directed: true
+//     });
+//     const pathToFinish = bf.pathTo(`#${finishNode}`).filter((node) => node.isNode());
+//     if (pathToFinish.length !== 0) {
+//       const newPath = [...path.slice(0, -1), ...pathToFinish];
+//       fullPaths.push(newPath);
+//     }
+//   })
+// });
 
 fullPaths.forEach((path) => {
   if (path?.at(-1)?._private?.data?.type?.toLowerCase() === 'finish') {
