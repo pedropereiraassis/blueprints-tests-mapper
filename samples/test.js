@@ -15,7 +15,8 @@ module.exports = [
           'cpf',
           'mobile_number',
           'email',
-          'partner_name'
+          'partner_name',
+          'accept_receive_emails'
         ],
         properties: {
           name: {
@@ -37,6 +38,9 @@ module.exports = [
           },
           partner_name: {
             type: 'string'
+          },
+          accept_receive_emails: {
+            type: 'boolean'
           }
         },
         additionalProperties: false
@@ -89,6 +93,9 @@ module.exports = [
         lending_purpose: {
           $ref: 'bag.lending_purpose'
         },
+        lending_sub_purpose: {
+          $ref: 'bag.lending_sub_purpose'
+        },
         desired_lending_amount: {
           $ref: 'bag.desired_lending_amount'
         }
@@ -99,15 +106,15 @@ module.exports = [
         if: {
           properties: {
             action: {
-              const: 'prosseguir'
+              const: 'voltar'
             }
           }
         },
         then: {
-          required: ['data']
+          required: ['action']
         },
         else: {
-          required: ['action']
+          required: ['data']
         },
         properties: {
           action: {
@@ -118,6 +125,9 @@ module.exports = [
             required: ['lending_purpose', 'desired_lending_amount'],
             properties: {
               lending_purpose: {
+                type: 'string'
+              },
+              lending_sub_purpose: {
                 type: 'string'
               },
               desired_lending_amount: {
@@ -173,6 +183,9 @@ module.exports = [
         },
         email: {
           $ref: 'bag.email'
+        },
+        accept_receive_emails: {
+          $ref: 'bag.accept_receive_emails'
         }
       },
       action: 'FORM_PERSONAL_DATA',
@@ -185,7 +198,14 @@ module.exports = [
           },
           data: {
             type: 'object',
-            required: ['name', 'birth_dt', 'cpf', 'mobile_number', 'email'],
+            required: [
+              'name',
+              'birth_dt',
+              'cpf',
+              'mobile_number',
+              'email',
+              'accept_receive_emails'
+            ],
             properties: {
               name: {
                 type: 'string'
@@ -203,6 +223,9 @@ module.exports = [
               email: {
                 type: 'string',
                 format: 'email'
+              },
+              accept_receive_emails: {
+                type: 'boolean'
               }
             },
             additionalProperties: false
@@ -235,6 +258,9 @@ module.exports = [
         },
         email: {
           $ref: 'result.activities[0].data.data.email'
+        },
+        accept_receive_emails: {
+          $ref: 'result.activities[0].data.data.accept_receive_emails'
         }
       }
     }
@@ -250,6 +276,9 @@ module.exports = [
       input: {
         lending_purpose: {
           $ref: 'result.activities[0].data.data.lending_purpose'
+        },
+        lending_sub_purpose: {
+          $ref: 'result.activities[0].data.data.lending_sub_purpose'
         },
         desired_lending_amount: {
           $ref: 'result.activities[0].data.data.desired_lending_amount'
@@ -274,8 +303,11 @@ module.exports = [
         occupation: {
           $ref: 'bag.occupation'
         },
-        monthly_income: {
-          $ref: 'bag.monthly_income'
+        renda_extra: {
+          $ref: 'bag.renda_extra'
+        },
+        extra_income: {
+          $ref: 'bag.extra_income'
         },
         declared_credit_restrictions: {
           $ref: 'bag.declared_credit_restrictions'
@@ -287,15 +319,15 @@ module.exports = [
         if: {
           properties: {
             action: {
-              const: 'prosseguir'
+              const: 'voltar'
             }
           }
         },
         then: {
-          required: ['data']
+          required: ['action']
         },
         else: {
-          required: ['action']
+          required: ['data']
         },
         properties: {
           action: {
@@ -306,7 +338,6 @@ module.exports = [
             required: [
               'salary',
               'occupation',
-              'monthly_income',
               'declared_credit_restrictions'
             ],
             properties: {
@@ -316,7 +347,10 @@ module.exports = [
               occupation: {
                 type: 'string'
               },
-              monthly_income: {
+              renda_extra: {
+                type: 'boolean'
+              },
+              extra_income: {
                 type: 'integer'
               },
               declared_credit_restrictions: {
@@ -362,8 +396,11 @@ module.exports = [
         occupation: {
           $ref: 'result.activities[0].data.data.occupation'
         },
-        monthly_income: {
-          $ref: 'result.activities[0].data.data.monthly_income'
+        renda_extra: {
+          $ref: 'result.activities[0].data.data.renda_extra'
+        },
+        extra_income: {
+          $ref: 'result.activities[0].data.data.extra_income'
         },
         declared_credit_restrictions: {
           $ref: 'result.activities[0].data.data.declared_credit_restrictions'
@@ -390,15 +427,15 @@ module.exports = [
         if: {
           properties: {
             action: {
-              const: 'prosseguir'
+              const: 'voltar'
             }
           }
         },
         then: {
-          required: ['data']
+          required: ['action']
         },
         else: {
-          required: ['action']
+          required: ['data']
         },
         properties: {
           action: {
@@ -406,13 +443,10 @@ module.exports = [
           },
           data: {
             type: 'object',
-            required: ['password', 'accept_receive_emails'],
+            required: ['password'],
             properties: {
               password: {
                 type: 'object'
-              },
-              accept_receive_emails: {
-                type: 'boolean'
               }
             },
             additionalProperties: false
@@ -476,10 +510,10 @@ module.exports = [
           $ref: 'bag.mobile_number'
         },
         monthly_income: {
-          $ref: 'bag.monthly_income'
+          $js: '({bag}) => bag.extra_income ? bag.salary + bag.extra_income : bag.salary'
         },
         lending_purpose: {
-          $ref: 'bag.lending_purpose'
+          $js: '({bag}) => bag.lending_sub_purpose || bag.lending_purpose'
         },
         accept_receive_emails: {
           $ref: 'bag.accept_receive_emails'

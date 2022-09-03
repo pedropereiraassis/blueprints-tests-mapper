@@ -1,7 +1,7 @@
-const nodes = require('./samples/expertBP');
+const nodes = require('./samples/test');
 const cytoscape = require('cytoscape');
 const cytoscapeAllPaths = require('cytoscape-all-paths');
-const { forEach } = require('lodash');
+const _ = require('lodash');
 cytoscape.use(cytoscapeAllPaths);
 
 const cy = cytoscape();
@@ -43,31 +43,43 @@ let paths = allPaths.map((path) => path.filter((node) => node.isNode()))
   // .map((node) => { return { id:node.id(), type: node._private.data.type } }))
 
 const loops = [];
-const otherPaths = [];
+const repeatedPaths = [];
+const fullPaths = [];
+let finalPaths = [];
+
 paths.forEach((path) => {
-  if (path?.at(-1)?._private?.data.type?.toLowerCase() !== 'finish') {
+  if (path?.at(-1)?._private?.data?.type?.toLowerCase() !== 'finish') {
     loops.push(path.slice(-2));
-    otherPaths.push(path);
-    paths.splice(paths.indexOf(path), 1);
+    repeatedPaths.push(path);
+  } else {
+    fullPaths.push(path);
   }
 });
 
-otherPaths.forEach((path) => {
+repeatedPaths.forEach((path) => {
   finishNodes.forEach((finishNode) => {
     const bf = eles.bellmanFord({
       root: `#${path.at(-1).id()}`,
       directed: true
     });
-    const pathToFinish = bf.pathTo(`#${finishNode}`).filter((node) => node.isNode());
-    path.pop();
-    const newPath = [...path, ...pathToFinish];
-    paths.push(newPath);
+    const pathToFinish = bf.pathTo(`#${finishNode}`).filter((node) => node.isNode()).select();
+    if (pathToFinish.length !== 0) {
+      const newPath = [...path.slice(0, -1), ...pathToFinish];
+      fullPaths.push(newPath);
+    }
   })
 });
+fullPaths.forEach((path) => {
+  if (path?.at(-1)?._private?.data?.type?.toLowerCase() === 'finish') {
+    finalPaths.push(path);
+  }
+});
+console.log()
+const finalPathsIds = finalPaths.map(path => path.map(node => node.id()));
+const uniqueFinalPaths = _.uniqWith(finalPathsIds, _.isEqual)
+console.log(uniqueFinalPaths);
+console.log(uniqueFinalPaths.length);
 
-const finalPaths = [...new Set(paths)]
-console.log(finalPaths.map(path => path.map(node => node.id())));
-console.log(finalPaths.length);
 // let paths = [];
 // const startNodes = eles.roots().map(node => node.id());
 
