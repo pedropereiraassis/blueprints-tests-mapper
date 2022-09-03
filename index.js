@@ -1,4 +1,4 @@
-const nodes = require('./samples/test');
+const nodes = require('./samples/expertBP');
 const cytoscape = require('cytoscape');
 const cytoscapeAllPaths = require('cytoscape-all-paths');
 const _ = require('lodash');
@@ -13,18 +13,16 @@ nodes.forEach((node) => {
     cy.add({
       data: {
         id: count,
-        weight: count,
         source: node.id,
         target: node.next
       }
     })
   } else if (node.next) {
-    for (const path of Object.values(node.next)) {
+    for (const path of _.uniq(Object.values(node.next))) {
       count++;
       cy.add({
         data: {
           id: count,
-          weight: count,
           source: node.id,
           target: path
         }
@@ -40,41 +38,55 @@ const finishNodes = eles.nodes()
 
 const allPaths = eles.cytoscapeAllPaths();
 let paths = allPaths.map((path) => path.filter((node) => node.isNode()))
-  // .map((node) => { return { id:node.id(), type: node._private.data.type } }))
-
-const loops = [];
-const repeatedPaths = [];
+// console.log(paths.map(path=>path.map(node=>node.id())))
+// console.log(paths.length)
+let repeatedPaths = [];
 const fullPaths = [];
 let finalPaths = [];
 
 paths.forEach((path) => {
   if (path?.at(-1)?._private?.data?.type?.toLowerCase() !== 'finish') {
-    loops.push(path.slice(-2));
     repeatedPaths.push(path);
   } else {
     fullPaths.push(path);
   }
 });
+// console.log(repeatedPaths.map(path=>path.map(node=>node.id())))
+console.log(repeatedPaths.length)
+while (repeatedPaths.length !== 0) {
+  repeatedPaths.forEach((path) => {
+    finishNodes.forEach((finishNode) => {
+      const bf = eles.bellmanFord({
+        root: `#${path.at(-1).id()}`,
+        directed: true
+      });
+      const pathToFinish = bf.pathTo(`#${finishNode}`).filter((node) => node.isNode());
+      if (pathToFinish.length !== 0) {
+        const newPath = [...path.slice(0, -1), ...pathToFinish];
+        fullPaths.push(newPath);
+      }
+    })
+  });
 
-repeatedPaths.forEach((path) => {
-  finishNodes.forEach((finishNode) => {
-    const bf = eles.bellmanFord({
-      root: `#${path.at(-1).id()}`,
-      directed: true
-    });
-    const pathToFinish = bf.pathTo(`#${finishNode}`).filter((node) => node.isNode()).select();
-    if (pathToFinish.length !== 0) {
-      const newPath = [...path.slice(0, -1), ...pathToFinish];
-      fullPaths.push(newPath);
+  repeatedPaths = [];
+
+  fullPaths.forEach((path) => {
+    if (path?.at(-1)?._private?.data?.type?.toLowerCase() === 'finish') {
+      finalPaths.push(path);
+    } else {
+      repeatedPaths.push(path);
     }
-  })
-});
+  });
+}
+
 fullPaths.forEach((path) => {
   if (path?.at(-1)?._private?.data?.type?.toLowerCase() === 'finish') {
     finalPaths.push(path);
+  } else {
+    repeatedPaths.push(path);
   }
 });
-console.log()
+
 const finalPathsIds = finalPaths.map(path => path.map(node => node.id()));
 const uniqueFinalPaths = _.uniqWith(finalPathsIds, _.isEqual)
 console.log(uniqueFinalPaths);
