@@ -1,5 +1,5 @@
 {
-  "name": "tests-mapper",
+  "name": "blueprint-tests-mapper",
   "version": "1.0.0",
   "description": "Tests mapper for processes blueprints.",
   "main": "index.js",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pedropereiraassis/tests-mapper.git"
+    "url": "https://github.com/pedropereiraassis/blueprint-tests-mapper.git"
   },
   "keywords": [
     "tests",
@@ -21,9 +21,9 @@
   "author": "Pedro Assis",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/pedropereiraassis/tests-mapper/issues"
+    "url": "https://github.com/pedropereiraassis/blueprint-tests-mapper/issues"
   },
-  "homepage": "https://github.com/pedropereiraassis/tests-mapper#readme",
+  "homepage": "https://github.com/pedropereiraassis/blueprint-tests-mapper#readme",
   "dependencies": {
     "cytoscape": "3.22.1",
     "cytoscape-all-paths": "0.1.0",
