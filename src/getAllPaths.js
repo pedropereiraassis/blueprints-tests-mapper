@@ -40,7 +40,7 @@ function getAllPaths(blueprint, ignoreLoops = false) {
 
   if (ignoreLoops) {
     paths.forEach((path) => {
-      if (path?.at(-1)?._private?.data?.type?.toLowerCase() === 'finish') {
+      if ((path?.at(-1)?._private?.data?.type?.toLowerCase() === 'finish') && path.length > 1) {
         fullPaths.push(path);
       }
     });
