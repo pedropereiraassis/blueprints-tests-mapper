@@ -41,7 +41,7 @@ module.exports = {
     ],
     "nodes": [
       {
-        "id": "START-CHOOSE-LOAN-DETAILS",
+        "id": "START",
         "name": "start",
         "next": "ACTOR-BAG",
         "type": "Start",

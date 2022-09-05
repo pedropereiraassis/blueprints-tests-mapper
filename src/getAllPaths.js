@@ -3,7 +3,7 @@ const cytoscapeAllPaths = require('cytoscape-all-paths');
 const _ = require('lodash');
 cytoscape.use(cytoscapeAllPaths);
 
-function getAllPaths(blueprint) {
+function getAllPaths(blueprint, ignoreLoops = false) {
   const { nodes } = blueprint.blueprint_spec;
   const cy = cytoscape();
   let count = 0;
@@ -35,48 +35,55 @@ function getAllPaths(blueprint) {
   const eles = cy.elements();
   const allPaths = eles.cytoscapeAllPaths();
   let paths = allPaths.map((path) => path.filter((node) => node.isNode()));
-  let repeatedPaths = [];
-  const fullPaths = [];
   let finalPaths = [];
+  const fullPaths = [];
 
-  paths.forEach((path) => {
-    if (path?.at(-1)?._private?.data?.type?.toLowerCase() !== 'finish') {
-      repeatedPaths.push(path);
-    } else {
-      fullPaths.push(path);
-    }
-  });
+  if (ignoreLoops) {
+    paths.forEach((path) => {
+      if (path?.at(-1)?._private?.data?.type?.toLowerCase() === 'finish') {
+        fullPaths.push(path);
+      }
+    });
+  } else {
+    let repeatedPaths = [];
 
-  while (repeatedPaths.length !== 0) {
-    repeatedPaths.forEach((repeatedPath) => {
-      const allNewPaths = eles.cytoscapeAllPaths({
-        rootIds: [`${repeatedPath.at(-1).id()}`]
-      });
-      let newPaths = allNewPaths.map((path) => path.filter((node) => node.isNode()));
-      
-      newPaths.forEach((newPath) => {
-        if (newPath?.at(-1)?._private?.data?.type?.toLowerCase() === 'finish') {
-          const newFullPath = [...repeatedPath.slice(0, -1), ...newPath];
-          fullPaths.push(newFullPath);
-        }
-      });
-    })
-
-    repeatedPaths = [];
-
-    fullPaths.forEach((path) => {
+    paths.forEach((path) => {
       if (path?.at(-1)?._private?.data?.type?.toLowerCase() !== 'finish') {
         repeatedPaths.push(path);
       } else {
-        finalPaths.push(path);
+        fullPaths.push(path);
       }
     });
+
+    while (repeatedPaths.length !== 0) {
+      repeatedPaths.forEach((repeatedPath) => {
+        const allNewPaths = eles.cytoscapeAllPaths({
+          rootIds: [`${repeatedPath.at(-1).id()}`]
+        });
+        let newPaths = allNewPaths.map((path) => path.filter((node) => node.isNode()));
+        
+        newPaths.forEach((newPath) => {
+          if (newPath?.at(-1)?._private?.data?.type?.toLowerCase() === 'finish') {
+            const newFullPath = [...repeatedPath.slice(0, -1), ...newPath];
+            fullPaths.push(newFullPath);
+          }
+        });
+      })
+
+      repeatedPaths = [];
+
+      fullPaths.forEach((path) => {
+        if (path?.at(-1)?._private?.data?.type?.toLowerCase() !== 'finish') {
+          repeatedPaths.push(path);
+        } else {
+          finalPaths.push(path);
+        }
+      });
+    }
   }
 
   fullPaths.forEach((path) => {
-    if (path?.at(-1)?._private?.data?.type?.toLowerCase() !== 'finish') {
-      repeatedPaths.push(path);
-    } else {
+    if (path?.at(-1)?._private?.data?.type?.toLowerCase() === 'finish') {
       finalPaths.push(path);
     }
   });
