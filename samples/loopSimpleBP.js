@@ -1,6 +1,6 @@
 module.exports = {
-  "name": "Hard BP",
-  "description": "Hard BP for tests",
+  "name": "Loop Simple BP",
+  "description": "Loop simple BP for tests",
   "blueprint_spec": {
     "requirements": ["core"],
     "prepare": [],
@@ -154,7 +154,7 @@ module.exports = {
         "name": "Check user action",
         "next": {
           "cancel": "END-USER",
-          "default": "END-VIEW",
+          "default": "USER-VIEW",
           "prosseguir": "REDIRECT"
         },
         "type": "Flow",
@@ -188,13 +188,6 @@ module.exports = {
       },
       {
         "id": "END-USER",
-        "name": "Finish node",
-        "next": null,
-        "type": "Finish",
-        "lane_id": "anyone"
-      },
-      {
-        "id": "END-VIEW",
         "name": "Finish node",
         "next": null,
         "type": "Finish",
@@ -241,4 +234,3 @@ module.exports = {
     "environment": {}
   }
 }
-

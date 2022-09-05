@@ -1,6 +1,6 @@
 module.exports = {
-  "name": "Simple BP",
-  "description": "Simple BP for tests",
+  "name": "Very Simple BP",
+  "description": "Very simple BP for tests",
   "blueprint_spec": {
     "requirements": ["core"],
     "prepare": [],
@@ -9,44 +9,11 @@ module.exports = {
         "id": "START",
         "type": "Start",
         "name": "Start Pizza 1 WF",
-        "next": "CHECK-ACTOR",
+        "next": "ORDER-PIZZA",
         "parameters": {
           "input_schema": {}
         },
         "lane_id": "1"
-      },
-      {
-        "id": "CHECK-ACTOR",
-        "type": "Flow",
-        "name": "Check process actor",
-        "next": {
-          "true": "ORDER-PIZZA",
-          "false": "BAG-ACTOR",
-          "default": "BAG-ACTOR"
-        },
-        "parameters": {
-          "input": {
-            "decision": {
-              "$ref": "bag.actor"
-            }
-          }
-        },
-        "lane_id": "1"
-      },
-      {
-        "id": "BAG-ACTOR",
-        "type": "SystemTask",
-        "name": "Set user to bag",
-        "category": "setToBag",
-        "next": "ORDER-PIZZA",
-        "lane_id": "1",
-        "parameters": {
-          "input": {
-            "user": {
-              "$ref": "actor_data.user"
-            }
-          }
-        }
       },
       {
         "id": "TAKE-ORDER",

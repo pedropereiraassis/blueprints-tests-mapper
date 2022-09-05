@@ -1,6 +1,6 @@
 module.exports = {
-  "name": "Extremly hard BP",
-  "description": "Extremly hard BP for tests",
+  "name": "Loop Multiple BP",
+  "description": "Loop multiple BP for tests",
   "blueprint_spec": {
     "lanes": [
       {
@@ -1119,7 +1119,7 @@ module.exports = {
       {
         "id": "UPDATE-SALESFORCE",
         "name": "start UPDATE_SALESFORCE",
-        "next": "END-CHOOSE",
+        "next": "END-SUCCESS",
         "type": "SystemTask",
         "lane_id": "actor_id",
         "category": "startProcess",
@@ -1155,7 +1155,7 @@ module.exports = {
         "lane_id": "actor_id"
       },
       {
-        "id": "END-CHOOSE",
+        "id": "END-SUCCESS",
         "name": "finish choose laoan details",
         "next": null,
         "type": "Finish",
