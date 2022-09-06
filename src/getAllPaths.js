@@ -90,8 +90,18 @@ function getAllPaths(blueprint, ignoreLoops = false) {
 
   const finalPathsIds = finalPaths.map(path => path.map(node => node.id()));
   const uniqueFinalPaths = _.uniqWith(finalPathsIds, _.isEqual);
+  let countPath = 0;
 
-  return uniqueFinalPaths;
+  return {
+    totalScenarios: uniqueFinalPaths.length,
+    scenarios: uniqueFinalPaths.map((path) => {
+      return {
+        id: countPath++,
+        name: `${path[0]}->${path.at(-1)}`,
+        nodes: uniqueFinalPaths[countPath - 1]
+      }
+    })
+  }
 }
 
 module.exports = {
