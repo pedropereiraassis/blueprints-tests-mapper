@@ -1,6 +1,6 @@
 {
   "name": "blueprints-tests-mapper",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Tests mapper for processes blueprints.",
   "main": "index.js",
   "scripts": {

@@ -98,6 +98,7 @@ function getAllPaths(blueprint, ignoreLoops = false) {
       return {
         id: countPath++,
         name: `${path[0]}->${path.at(-1)}`,
+        steps: uniqueFinalPaths[countPath - 1].length,
         nodes: uniqueFinalPaths[countPath - 1]
       }
     })
