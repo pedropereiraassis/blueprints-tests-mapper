@@ -4,6 +4,7 @@ const simpleBP = require('../../samples/simpleBP');
 const mediumBP = require('../../samples/mediumBP');
 const averageBP = require('../../samples/averageBP');
 const loopSimpleBP = require('../../samples/loopSimpleBP');
+const loopMediumBP = require('../../samples/loopMediumBP');
 const loopMultipleBP = require('../../samples/loopMultipleBP');
 
 describe('Get All Paths tests with loops', () => {
@@ -34,6 +35,12 @@ describe('Get All Paths tests with loops', () => {
   test('get all loopSimpleBP paths', () => {
     const allPaths = getAllPaths(loopSimpleBP);
     expect(allPaths.totalScenarios).toEqual(6);
+    expect(allPaths.scenarios).toBeDefined();
+  });
+     
+  test('get all loopMediumBP paths', () => {
+    const allPaths = getAllPaths(loopMediumBP);
+    expect(allPaths.totalScenarios).toEqual(8);
     expect(allPaths.scenarios).toBeDefined();
   });
    
@@ -73,6 +80,12 @@ describe('Get All Paths tests ignoring loops', () => {
   test('get all loopSimpleBP paths', () => {
     const allPaths = getAllPaths(loopSimpleBP, true);
     expect(allPaths.totalScenarios).toEqual(3);
+    expect(allPaths.scenarios).toBeDefined();
+  });
+     
+  test('get all loopMediumBP paths', () => {
+    const allPaths = getAllPaths(loopMediumBP, true);
+    expect(allPaths.totalScenarios).toEqual(6);
     expect(allPaths.scenarios).toBeDefined();
   });
    

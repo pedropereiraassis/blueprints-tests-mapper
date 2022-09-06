@@ -41,6 +41,9 @@ must have the valid properties 'name', 'description' and 'blueprint_spec' in it.
 ### Number of paths: 6 (Counting loop) / 3 (Ignoring loop)
 <img src='./public/images/loopSimpleBP.png' alt='Loop Simple BP'/>
 
+### Number of paths: 8 (Counting loop) / 6 (Ignoring loop)
+<img src='./public/images/loopMediumBP.png' alt='Loop Medium BP'/>
+
 ### Number of paths: 9 (Counting loop) / 5 (Ignoring loop)
 <img src='./public/images/averageBP.png' alt='Average BP'/>
 
