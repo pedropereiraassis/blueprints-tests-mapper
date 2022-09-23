@@ -34,7 +34,7 @@ describe('Get All Paths tests with loops', () => {
   
   test('get all loopSimpleBP paths', () => {
     const allPaths = getAllPaths(loopSimpleBP);
-    expect(allPaths.totalScenarios).toEqual(6);
+    expect(allPaths.totalScenarios).toEqual(8);
     expect(allPaths.scenarios).toBeDefined();
   });
      
@@ -79,7 +79,7 @@ describe('Get All Paths tests ignoring loops', () => {
   
   test('get all loopSimpleBP paths', () => {
     const allPaths = getAllPaths(loopSimpleBP, true);
-    expect(allPaths.totalScenarios).toEqual(3);
+    expect(allPaths.totalScenarios).toEqual(4);
     expect(allPaths.scenarios).toBeDefined();
   });
      
